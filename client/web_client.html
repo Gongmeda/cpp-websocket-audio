@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket Audio Echo Client</title>
+</head>
+<body>
+    <h1>Websocket Audio Echo Client</h1>
+    <p>This is Websocket Audio Echo Example Client Page.</p>
+    <br>
+
+    <div>
+        <label for="host">Host</label>
+        <input id="host" value="127.0.0.1">
+    </div>
+    <div>
+        <label for="port">Port</label>
+        <input id="port" value="8080">
+    </div>
+    
+    <div id="buttons">
+        <h2>Streamer</h2>
+        <button id="StreamerStartBtn">Start</button>
+        <button id="StreamerStopBtn">Stop</button>
+
+        <h2>Player</h2>
+        <button id="PlayerStartBtn">Start</button>
+        <button id="PlayerStopBtn">Stop</button>
+    </div>
+
+    <script src="opus.js"></script>
+    <script src="libopus.js"></script>
+    <script src="xaudio.js"></script>
+    <script src="ws-audio-api.js"></script>  
+    <script>
+        var host = document.getElementById('host');
+        var port = document.getElementById('port');
+
+        var StreamerStartBtn = document.getElementById('StreamerStartBtn');
+        var StreamerStopBtn = document.getElementById('StreamerStopBtn');
+        var PlayerStartBtn = document.getElementById('PlayerStartBtn');
+        var PlayerStopBtn = document.getElementById('PlayerStopBtn');
+
+        var streamer = null;
+        var player = null;
+        
+        StreamerStartBtn.onclick = function () {
+            // resume audio context
+            audioContext.resume();
+            audioContextHandle.resume();
+
+            // init
+            streamer = new WSAudioAPI.Streamer();
+            streamer.config.server.host = host.value;
+            streamer.config.server.port = Number(port.value);
+
+            // connect websocket
+            streamer.start();
+        };
+
+        StreamerStopBtn.onclick = function () {
+            streamer.stop();
+        };
+
+        PlayerStartBtn.onclick = function () {
+            player = new WSAudioAPI.Player();
+            player.config.server.host = host.value;
+            player.config.server.port = Number(port.value);
+
+            player.start();
+        }
+
+        PlayerStopBtn.onclick = function () {
+            player.stop();
+        }
+    </script>   
+</body>
+</html>
