@@ -2,37 +2,29 @@
 
 project ("cpp-ws-echo-server" LANGUAGES CXX)
 
-if (NOT DEFINED CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-endif ()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package (Boost 1.74 REQUIRED)
 find_package (OpenSSL REQUIRED)
-find_package(Threads)
+find_package (Threads)
 
-add_compile_definitions (
-    BOOST_DATE_TIME_NO_LIB
-    BOOST_REGEX_NO_LIB)
+include_directories (
+    ${OPENSSL_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+    ${SERVER_PATH})
+
+link_directories (
+    ${Boost_LIBRARY_DIRS})
 
 set (SERVER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/server")
 
 file (GLOB_RECURSE SERVER_SOURCE_FILES "${SERVER_PATH}/*.cpp")
-file (GLOB_RECURSE SERVER_HEADER_FILES "${SERVER_PATH}/*.hpp")
 
-include_directories (
-    ${Boost_INCLUDE_DIRS}
-    ${OPENSSL_INCLUDE_DIR}
-    ${SERVER_PATH})
-
-link_directories (${Boost_LIBRARY_DIRS})
-
-target_link_libraries(${PROJECT_NAME}
-    ${Boost_LIBRARIES}
-    ${OPENSSL_LIBRARIES})
-
-add_executable (${PROJECT_NAME}
-    ${SERVER_HEADER_FILES}
+add_executable (${CMAKE_PROJECT_NAME}
     ${SERVER_SOURCE_FILES})
 
-set(SOURCE
-    ${CMAKE_CURRENT_SOURCE_DIR}/server/listner.cpp)
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    Threads::Threads
+    ${OPENSSL_LIBRARIES}
+    ${Boost_LIBRARIES})
